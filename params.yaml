@@ -1,0 +1,61 @@
+# ============================================================
+# scRNA-seq Pipeline Configuration
+# Edit this file to customize the analysis.
+# No need to modify R scripts for routine analyses.
+# ============================================================
+
+project:
+  name: "PBMC_scRNAseq_analysis"
+  use_demo_data: true       # true = download PBMC 3k demo data automatically
+  seed: 42                  # Random seed for reproducibility
+
+data:
+  input_dir: "data/raw"     # Path to 10x matrix files or .rds Seurat object
+  output_dir: "data/processed"
+  sample_name: "sample1"
+  input_format: "10x"       # "10x" (MEX format) or "rds" (Seurat object)
+
+qc:
+  min_features: 200         # Min genes per cell (remove empty droplets)
+  max_features: 5000        # Max genes per cell (remove potential doublets)
+  min_counts: 500           # Min UMI counts per cell
+  max_counts: 25000         # Max UMI counts per cell
+  max_mt_percent: 20        # Max mitochondrial gene % (remove dying cells)
+  mt_pattern: "^MT-"        # Mitochondrial gene prefix (human: ^MT-, mouse: ^mt-)
+
+normalization:
+  method: "LogNormalize"    # "LogNormalize" or "SCTransform"
+  scale_factor: 10000       # For LogNormalize
+  n_variable_features: 2000 # Number of highly variable genes to use
+  vars_to_regress: []       # Variables to regress out, e.g. ["percent.mt", "nCount_RNA"]
+
+dim_reduction:
+  n_pcs: 30                 # Number of PCs to compute
+  pcs_use: 20               # Number of PCs to use for UMAP/clustering (check elbow plot)
+  run_tsne: false           # Also compute tSNE (slower)
+  umap_min_dist: 0.3
+  umap_n_neighbors: 30
+
+clustering:
+  resolution: 0.5           # Louvain resolution (0.1-2.0; higher = more clusters)
+  algorithm: 1              # 1=Louvain, 2=Louvain refined, 3=SLM, 4=Leiden
+
+annotation:
+  method: "singler"         # "singler" (automated) or "manual"
+  reference: "HumanPrimaryCellAtlasData"  # celldex reference dataset
+  # For manual annotation, define markers per cluster in R/06_annotation.R
+
+differential_expression:
+  test: "wilcox"            # "wilcox", "MAST", "DESeq2", "t"
+  min_pct: 0.1              # Min fraction of cells expressing gene
+  logfc_threshold: 0.25     # Log fold-change threshold
+  n_top_markers: 10         # Top N markers to show per cluster
+
+output:
+  figures_dir: "results/figures"
+  tables_dir: "results/tables"
+  reports_dir: "results/reports"
+  save_formats: ["pdf", "png"]
+  figure_width: 10
+  figure_height: 8
+  dpi: 300
