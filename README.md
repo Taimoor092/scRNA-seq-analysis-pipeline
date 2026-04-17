@@ -253,4 +253,4 @@ MIT License — see [LICENSE](LICENSE) for details.
 
 ---
 
-*Built with ❤️ for reproducible bioinformatics | [Your Name] | MSc Bioinformatics*
+*Built with ❤️ for reproducible bioinformatics | Taimoor Qadir | MSc Bioinformatics*
